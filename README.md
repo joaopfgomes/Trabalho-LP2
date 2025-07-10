@@ -82,3 +82,12 @@ Sistema --> Jogador : gerencia
 Sistema --> Transferencia : gerencia
 Sistema --> BID : gerencia
 :::
+
+Roadmap de Desenvolvimento:
+Finalizar os modelos das classes - Garantir que todas as classes (Jogador, Time, Transferencia, Agente, Contrato, BID, Campeonato, Sistema) tenham construtores, getters e setters. - Validar os relacionamentos entre as classes (ex: listas, referências).  
+Implementar métodos principais - Métodos de cadastro (cadastrarTime, cadastrarJogador) na classe Sistema. - Método de registro de transferência (registrarTransferencia) e lógica de atualização dos objetos envolvidos. - Métodos de relatório (exibirRelatorios) para mostrar dados relevantes.  
+Adicionar lógica de negócio - Regras para transferências (ex: cálculo de multa, luvas, comissão). - Atualização de saldo dos times e contratos dos jogadores. - Validação de datas e restrições contratuais.  
+Interface de usuário no console - Criar um menu interativo para o usuário escolher as funções do sistema (cadastro, transferência, relatórios, etc). - Implementar leitura de dados via teclado e exibição de resultados no console.  
+Persistência de dados (opcional) - Definir se os dados serão mantidos apenas em memória ou se haverá persistência (ex: arquivos, banco de dados).  
+Testes - Escrever testes unitários para os métodos principais. - Validar cenários de transferência, cadastro e relatórios.  
+Documentação - Comentar o código e atualizar o README.md com instruções de uso e exemplos.
