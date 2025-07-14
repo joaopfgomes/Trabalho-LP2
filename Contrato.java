@@ -17,5 +17,50 @@ public class Contrato {
         this.clausulas = clausulas;
     }
 
-    // Getters e setters
-}
+    public Jogador getJogador() {
+        return jogador;
+    }
+
+    public void setJogador(Jogador jogador) {
+        this.jogador = jogador;
+    }
+
+    public Time getTime() {
+        return time;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
+    }
+
+    public Date getInicio() {
+        return inicio;
+    }
+
+    public void setInicio(Date inicio) {
+        this.inicio = inicio;
+    }
+
+    public Date getFim() {
+        return fim;
+    }
+
+    public void setFim(Date fim) {
+        this.fim = fim;
+    }
+
+    public double getMultaRescisoria() {
+        return multaRescisoria;
+    }
+
+    public void setMultaRescisoria(double multaRescisoria) {
+        this.multaRescisoria = multaRescisoria;
+    }
+
+    public String getClausulas() {
+        return clausulas;
+    }
+
+    public void setClausulas(String clausulas) {
+        this.clausulas = clausulas;
+    }}

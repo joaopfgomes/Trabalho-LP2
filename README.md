@@ -2,26 +2,29 @@
 
 Trabalho final de LP2
 
-
 Este é o trabalho final de LP2, o tema será um sistema gerenciador de elencos com transferências de jogadores do plantel de diversos times.
 
-o diagrama das classes atual está da seguinte maneira:
+## Diagrama de Classes
 
 ::: mermaid
     classDiagram
 class Jogador {
--String nome
+-String nomeJogador
 -String posicao
 -double valorMercado
 -Time timeAtual
 -Agente agente
 -Contrato contrato
++removerContrato()
++removerAgente()
++removerTimeAtual()
 }
 
 class Time {
--String nome
+-String nomeTime
 -double saldoCaixa
 -List~Jogador~ jogadores
++removerJogadorDoTime()
 }
 
 class Transferencia {
@@ -38,12 +41,14 @@ class Transferencia {
 class BID {
 -List~Transferencia~ transferencias
 +registrarTransferencia()
++removerTransferencia()
 }
 
 class Agente {
--String nome
+-String nomeAgente
 -List~Jogador~ jogadoresAgenciados
 +calcularComissao()
++removerJogadorAgenciado()
 }
 
 class Contrato {
@@ -56,8 +61,9 @@ class Contrato {
 }
 
 class Campeonato {
--String nome
+-String nomeCampeonato
 -List~Time~ times
++removerTime()
 }
 
 class Sistema {
@@ -65,6 +71,15 @@ class Sistema {
 +cadastrarTime()
 +cadastrarJogador()
 +registrarTransferencia()
++removerJogador()
++removerTime()
++removerTransferencia()
++listarJogadores()
++listarTimes()
++listarTransferencias()
++atualizarJogador()
++atualizarTime()
++atualizarTransferencia()
 +exibirRelatorios()
 }
 
@@ -82,3 +97,15 @@ Sistema --> Jogador : gerencia
 Sistema --> Transferencia : gerencia
 Sistema --> BID : gerencia
 :::
+
+## Roadmap
+
+- [x] Modelagem das classes principais (Jogador, Time, Agente, Contrato, Transferencia, BID, Campeonato)
+- [x] Implementação dos métodos CRUD nas entidades
+- [x] Centralização das operações na classe Sistema
+- [x] Atualização do diagrama de classes
+- [ ] Implementação de interface de usuário (linha de comando)
+- [ ] Persistência dos dados em arquivo .csv
+- [ ] Validações e tratamento de erros
+- [ ] Testes automatizados
+- [ ] Interface gráfica (opcional)
