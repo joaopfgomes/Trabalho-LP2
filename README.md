@@ -7,6 +7,7 @@ Este é o trabalho final de LP2, o tema será um sistema gerenciador de elencos 
 ## Diagrama de Classes
 
 ::: mermaid
+
     classDiagram
     class Jogador {
         - String nomeJogador
@@ -35,7 +36,7 @@ Este é o trabalho final de LP2, o tema será um sistema gerenciador de elencos 
         + void associarContrato(Contrato)
         + boolean isFreeAgent()
     }
-
+    
     class Time {
         - String nomeTime
         - double saldoCaixa
