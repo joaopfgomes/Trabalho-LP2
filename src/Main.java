@@ -91,7 +91,7 @@ public class Main {
         System.out.print("Nome do time: ");
         String nomeTime = scanner.nextLine();
         System.out.print("Saldo em caixa: ");
-        double saldo = 0;
+        double saldo;
         try {
             saldo = Double.parseDouble(scanner.nextLine());
         } catch (NumberFormatException e) {
@@ -205,7 +205,7 @@ public class Main {
         System.out.print("Posição: ");
         String posicao = scanner.nextLine();
         System.out.print("Valor de mercado: ");
-        double valor = 0;
+        double valor;
         try {
             valor = Double.parseDouble(scanner.nextLine());
         } catch (NumberFormatException e) {
@@ -218,7 +218,7 @@ public class Main {
         String associarTime = scanner.nextLine().trim().toLowerCase();
         Time time = null;
         LocalDate inicio = null, fim = null;
-        double multaRescisoria = 0;
+        double multaRescisoria;
         String clausulas = "";
         if (associarTime.equals("s")) {
             if (sistema.listarTimes().isEmpty()) {
@@ -247,6 +247,8 @@ public class Main {
                 System.out.println("Data inválida. Cadastro cancelado.");
                 return;
             }
+        } else {
+            multaRescisoria = 0;
         }
         try {
             sistema.cadastrarJogadorCompleto(nomeJogador, posicao, valor, agente, time, inicio, fim, multaRescisoria, clausulas);
@@ -272,10 +274,10 @@ public class Main {
             System.out.println("Time inválido.");
             return;
         }
-        double valorTransferencia = 0;
-        double luvas = 0;
-        double multa = 0;
-        double comissao = 0;
+        double valorTransferencia;
+        double luvas;
+        double multa;
+        double comissao;
         if (jogador.getContrato() != null && jogador.getTimeAtual() != null) {
             multa = jogador.getContrato().getMultaRescisoria();
             valorTransferencia = multa;

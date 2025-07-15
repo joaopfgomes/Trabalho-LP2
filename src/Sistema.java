@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sistema implements Relatorio {
-    private List<Time> times = new ArrayList<>();
-    private List<Jogador> jogadores = new ArrayList<>();
-    private List<Agente> agentes = new ArrayList<>();
-    private BID bid = new BID(new ArrayList<>());
+    private final List<Time> times = new ArrayList<>();
+    private final List<Jogador> jogadores = new ArrayList<>();
+    private final List<Agente> agentes = new ArrayList<>();
+    private final BID bid = new BID(new ArrayList<>());
 
     public void cadastrarTime(String nome, double saldoCaixa) {
         Time time = new Time(nome, saldoCaixa, new ArrayList<>());
