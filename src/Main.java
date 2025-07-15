@@ -217,7 +217,9 @@ public class Main {
         System.out.print("Deseja associar o jogador a um time? (s/n): ");
         String associarTime = scanner.nextLine().trim().toLowerCase();
         Time time = null;
-        Contrato contrato = null;
+        LocalDate inicio = null, fim = null;
+        double multaRescisoria = 0;
+        String clausulas = "";
         if (associarTime.equals("s")) {
             if (sistema.listarTimes().isEmpty()) {
                 System.out.println("Cadastre um time antes de associar.");
@@ -230,7 +232,6 @@ public class Main {
             System.out.print("Data de fim do contrato (yyyy-MM-dd): ");
             String fimStr = scanner.nextLine();
             System.out.print("Multa rescisória: ");
-            double multaRescisoria = 0;
             try {
                 multaRescisoria = Double.parseDouble(scanner.nextLine());
             } catch (NumberFormatException e) {
@@ -238,8 +239,7 @@ public class Main {
                 return;
             }
             System.out.print("Cláusulas do contrato: ");
-            String clausulas = scanner.nextLine();
-            LocalDate inicio = null, fim = null;
+            clausulas = scanner.nextLine();
             try {
                 inicio = LocalDate.parse(inicioStr, formatter);
                 fim = LocalDate.parse(fimStr, formatter);
@@ -247,10 +247,9 @@ public class Main {
                 System.out.println("Data inválida. Cadastro cancelado.");
                 return;
             }
-            contrato = new Contrato(null, time, inicio, fim, multaRescisoria, clausulas);
         }
         try {
-            sistema.cadastrarJogador(nomeJogador, posicao, valor, time, agente, contrato);
+            sistema.cadastrarJogadorCompleto(nomeJogador, posicao, valor, agente, time, inicio, fim, multaRescisoria, clausulas);
             if (associarTime.equals("s")) {
                 System.out.println("Jogador cadastrado e vinculado ao time!");
             } else {

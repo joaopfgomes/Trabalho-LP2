@@ -33,6 +33,22 @@ public class Sistema implements Relatorio {
         jogadores.add(jogador);
     }
 
+    /**
+     * Cadastro completo de jogador, com validações de negócio centralizadas.
+     */
+    public void cadastrarJogadorCompleto(String nome, String posicao, double valorMercado, Agente agente, Time time, LocalDate inicioContrato, LocalDate fimContrato, double multaRescisoria, String clausulas) {
+        if (agente == null) throw new IllegalArgumentException("Todo jogador deve ter um agente.");
+        if (nome == null || nome.trim().isEmpty()) throw new IllegalArgumentException("Nome do jogador não pode ser nulo ou vazio.");
+        if (valorMercado < 0) throw new IllegalArgumentException("Valor de mercado não pode ser negativo.");
+        Contrato contrato = null;
+        if (time != null) {
+            if (inicioContrato == null || fimContrato == null) throw new IllegalArgumentException("Contrato exige datas de início e fim.");
+            if (multaRescisoria < 0) throw new IllegalArgumentException("Multa rescisória não pode ser negativa.");
+            contrato = new Contrato(null, time, inicioContrato, fimContrato, multaRescisoria, clausulas);
+        }
+        cadastrarJogador(nome, posicao, valorMercado, time, agente, contrato);
+    }
+
     public void registrarTransferencia(Jogador jogador, Time timeDestino, double valor, double luvas, double multaRescisoria, double comissaoAgente, Contrato novoContrato) {
         Time timeOrigem = jogador.getTimeAtual();
         if (timeDestino == null) {
@@ -170,48 +186,5 @@ public class Sistema implements Relatorio {
             }
         }
         return validos;
-    }
-
-    public boolean atualizarJogador(Jogador jogador, String novoNome, String novaPosicao, double novoValorMercado, Time novoTime, Agente novoAgente, Contrato novoContrato) {
-        if (jogadores.contains(jogador)) {
-            jogador.setNomeJogador(novoNome);
-            jogador.setPosicao(novaPosicao);
-            jogador.setValorMercado(novoValorMercado);
-            if (jogador.getTimeAtual() != null) {
-                jogador.getTimeAtual().removerJogadorDoTime(jogador);
-            }
-            jogador.setTimeAtual(novoTime);
-            if (novoTime != null) {
-                novoTime.getJogadores().add(jogador);
-            }
-            jogador.setAgente(novoAgente);
-            jogador.setContrato(novoContrato);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean atualizarTime(Time time, String novoNome, double novoSaldoCaixa) {
-        if (times.contains(time)) {
-            time.setNomeTime(novoNome);
-            time.setSaldoCaixa(novoSaldoCaixa);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean atualizarTransferencia(Transferencia transferencia, Jogador novoJogador, Time novoOrigem, Time novoDestino, double novaMulta, double novasLuvas, double novoValor, LocalDate novaData, double novaComissao) {
-        if (bid.getTransferencias().contains(transferencia)) {
-            transferencia.setJogador(novoJogador);
-            transferencia.setTimeOrigem(novoOrigem);
-            transferencia.setTimeDestino(novoDestino);
-            transferencia.setMultaRescisoria(novaMulta);
-            transferencia.setLuvas(novasLuvas);
-            transferencia.setValor(novoValor);
-            transferencia.setData(novaData);
-            transferencia.setComissaoAgente(novaComissao);
-            return true;
-        }
-        return false;
     }
 }
