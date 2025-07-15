@@ -200,15 +200,10 @@ public class Main {
             System.out.println("Cadastre um agente antes de cadastrar jogadores.");
             return;
         }
-        System.out.print("Nome do jogador: ");
-        String nomeJogador = scanner.nextLine();
-        System.out.print("Posição: ");
-        String posicao = scanner.nextLine();
-        System.out.print("Valor de mercado: ");
-        double valor;
-        try {
-            valor = Double.parseDouble(scanner.nextLine());
-        } catch (NumberFormatException e) {
+        String nomeJogador = lerString(scanner, "Nome do jogador: ");
+        String posicao = lerString(scanner, "Posição: ");
+        Double valor = lerDouble(scanner, "Valor de mercado: ");
+        if (valor == null) {
             System.out.println("Valor de mercado inválido. Cadastro cancelado.");
             return;
         }
@@ -218,8 +213,8 @@ public class Main {
         String associarTime = scanner.nextLine().trim().toLowerCase();
         Time time = null;
         LocalDate inicio = null, fim = null;
-        double multaRescisoria;
-        String clausulas = "";
+        Double multaRescisoria;
+        String clausulas;
         if (associarTime.equals("s")) {
             if (sistema.listarTimes().isEmpty()) {
                 System.out.println("Cadastre um time antes de associar.");
@@ -227,28 +222,17 @@ public class Main {
             }
             time = selecionarTimeUI(sistema, scanner);
             if (time == null) return;
-            System.out.print("Data de início do contrato (yyyy-MM-dd): ");
-            String inicioStr = scanner.nextLine();
-            System.out.print("Data de fim do contrato (yyyy-MM-dd): ");
-            String fimStr = scanner.nextLine();
-            System.out.print("Multa rescisória: ");
-            try {
-                multaRescisoria = Double.parseDouble(scanner.nextLine());
-            } catch (NumberFormatException e) {
+            inicio = lerData(scanner, formatter, "Data de início do contrato (yyyy-MM-dd): ");
+            fim = lerData(scanner, formatter, "Data de fim do contrato (yyyy-MM-dd): ");
+            multaRescisoria = lerDouble(scanner, "Multa rescisória: ");
+            if (multaRescisoria == null) {
                 System.out.println("Multa rescisória inválida. Cadastro cancelado.");
                 return;
             }
-            System.out.print("Cláusulas do contrato: ");
-            clausulas = scanner.nextLine();
-            try {
-                inicio = LocalDate.parse(inicioStr, formatter);
-                fim = LocalDate.parse(fimStr, formatter);
-            } catch (Exception e) {
-                System.out.println("Data inválida. Cadastro cancelado.");
-                return;
-            }
+            clausulas = lerString(scanner, "Cláusulas do contrato: ");
         } else {
-            multaRescisoria = 0;
+            multaRescisoria = 0.0;
+            clausulas = "";
         }
         try {
             sistema.cadastrarJogadorCompleto(nomeJogador, posicao, valor, agente, time, inicio, fim, multaRescisoria, clausulas);
@@ -299,7 +283,7 @@ public class Main {
         String fimStrT = scanner.nextLine();
         System.out.print("Cláusulas do novo contrato: ");
         String clausulasT = scanner.nextLine();
-        LocalDate inicioT = null, fimT = null;
+        LocalDate inicioT, fimT;
         try {
             inicioT = LocalDate.parse(inicioStrT, formatter);
             fimT = LocalDate.parse(fimStrT, formatter);
@@ -402,6 +386,31 @@ public class Main {
             System.out.println("Agente removido com sucesso!");
         } else {
             System.out.println("Erro ao remover agente.");
+        }
+    }
+
+    // Funções auxiliares para simplificar o cadastro
+    private static String lerString(Scanner scanner, String mensagem) {
+        System.out.print(mensagem);
+        return scanner.nextLine();
+    }
+
+    private static Double lerDouble(Scanner scanner, String mensagem) {
+        System.out.print(mensagem);
+        try {
+            return Double.parseDouble(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private static LocalDate lerData(Scanner scanner, DateTimeFormatter formatter, String mensagem) {
+        System.out.print(mensagem);
+        String dataStr = scanner.nextLine();
+        try {
+            return LocalDate.parse(dataStr, formatter);
+        } catch (Exception e) {
+            return null;
         }
     }
 }
