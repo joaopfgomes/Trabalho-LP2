@@ -35,6 +35,12 @@ public class Sistema implements Relatorio {
 
     public void registrarTransferencia(Jogador jogador, Time timeDestino, double valor, double luvas, double multaRescisoria, double comissaoAgente, Contrato novoContrato) {
         Time timeOrigem = jogador.getTimeAtual();
+        if (timeDestino == null) {
+            throw new IllegalArgumentException("Time de destino não pode ser nulo.");
+        }
+        if (timeOrigem != null && timeOrigem.equals(timeDestino)) {
+            throw new IllegalArgumentException("Transferência para o mesmo time não é permitida.");
+        }
         if (timeOrigem == null || jogador.getContrato() == null) {
             timeDestino.adicionarJogador(jogador);
             jogador.associarTime(timeDestino);
