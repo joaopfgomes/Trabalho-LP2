@@ -1,16 +1,30 @@
-import java.util.Date;
+package src;
+
+import java.time.LocalDate;
 
 public class Transferencia {
     private Jogador jogador;
     private Time timeOrigem;
     private Time timeDestino;
-    private double multaRecisoria;
+    private double multaRescisoria;
     private double luvas;
     private double valor;
-    private Date data;
+    private LocalDate data;
     private double comissaoAgente;
 
-    public Transferencia(Jogador jogador, Time timeOrigem, Time timeDestino, double multaRecisoria, double luvas, double valor, Date data, double comissaoAgente) {
+    public Transferencia(Jogador jogador, Time timeOrigem, Time timeDestino, double multaRescisoria, double luvas, double valor, LocalDate data, double comissaoAgente) {
+        if (jogador == null) {
+            throw new IllegalArgumentException("Jogador não pode ser nulo na transferência.");
+        }
+        if (timeDestino == null) {
+            throw new IllegalArgumentException("Time de destino não pode ser nulo na transferência.");
+        }
+        if (data == null) {
+            throw new IllegalArgumentException("Data da transferência não pode ser nula.");
+        }
+        if (multaRescisoria < 0 || luvas < 0 || valor < 0 || comissaoAgente < 0) {
+            throw new IllegalArgumentException("Valores financeiros não podem ser negativos.");
+        }
         this.jogador = jogador;
         this.timeOrigem = timeOrigem;
         this.timeDestino = timeDestino;
@@ -45,11 +59,11 @@ public class Transferencia {
     }
 
     public double getMultaRescisoria() {
-        return multaRecisoria;
+        return multaRescisoria;
     }
 
     public void setMultaRescisoria(double multaRescisoria) {
-        this.multaRecisoria = multaRescisoria;
+        this.multaRescisoria = multaRescisoria;
     }
 
     public double getLuvas() {
@@ -68,11 +82,11 @@ public class Transferencia {
         this.valor = valor;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 

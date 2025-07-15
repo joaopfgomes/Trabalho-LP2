@@ -1,14 +1,16 @@
-import java.util.Date;
+package src;
+
+import java.time.LocalDate;
 
 public class Contrato {
     private Jogador jogador;
     private Time time;
-    private Date inicio;
-    private Date fim;
+    private LocalDate inicio;
+    private LocalDate fim;
     private double multaRescisoria;
     private String clausulas;
 
-    public Contrato(Jogador jogador, Time time, Date inicio, Date fim, double multaRescisoria, String clausulas) {
+    public Contrato(Jogador jogador, Time time, LocalDate inicio, LocalDate fim, double multaRescisoria, String clausulas) {
         this.jogador = jogador;
         this.time = time;
         this.inicio = inicio;
@@ -33,19 +35,19 @@ public class Contrato {
         this.time = time;
     }
 
-    public Date getInicio() {
+    public LocalDate getInicio() {
         return inicio;
     }
 
-    public void setInicio(Date inicio) {
+    public void setInicio(LocalDate inicio) {
         this.inicio = inicio;
     }
 
-    public Date getFim() {
+    public LocalDate getFim() {
         return fim;
     }
 
-    public void setFim(Date fim) {
+    public void setFim(LocalDate fim) {
         this.fim = fim;
     }
 
@@ -63,4 +65,6 @@ public class Contrato {
 
     public void setClausulas(String clausulas) {
         this.clausulas = clausulas;
-    }}
+    }
+}
+

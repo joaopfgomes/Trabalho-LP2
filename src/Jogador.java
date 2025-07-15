@@ -1,5 +1,6 @@
-public class Jogador {
-    private String nomeJogador;
+package src;
+
+public class Jogador extends Pessoa {
     private String posicao;
     private double valorMercado;
     private Time timeAtual;
@@ -7,19 +8,23 @@ public class Jogador {
     private Contrato contrato;
 
     public Jogador(String nomeJogador, String posicao, double valorMercado, Time timeAtual, Agente agente, Contrato contrato) {
-        this.nomeJogador = nomeJogador;
+        super(nomeJogador);
+        if (nomeJogador == null || nomeJogador.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do jogador não pode ser nulo ou vazio.");
+        }
         this.posicao = posicao;
         this.valorMercado = valorMercado;
         this.timeAtual = timeAtual;
         this.agente = agente;
         this.contrato = contrato;
     }
+
     public String getNomeJogador() {
-        return nomeJogador;
+        return getNome();
     }
 
     public void setNomeJogador(String nomeJogador) {
-        this.nomeJogador = nomeJogador;
+        setNome(nomeJogador);
     }
 
     public String getPosicao() {
@@ -61,6 +66,7 @@ public class Jogador {
     public void setContrato(Contrato contrato) {
         this.contrato = contrato;
     }
+
     public void removerContrato() {
         this.contrato = null;
     }
@@ -69,4 +75,26 @@ public class Jogador {
     }
     public void removerTimeAtual() {
         this.timeAtual = null;
-    }}
+    }
+    public void associarTime(Time time) {
+        this.timeAtual = time;
+        if (time != null && !time.getJogadores().contains(this)) {
+            time.adicionarJogador(this);
+        }
+    }
+
+    public void associarAgente(Agente agente) {
+        this.agente = agente;
+        if (agente != null && !agente.getJogadoresAgenciados().contains(this)) {
+            agente.adicionarJogadorAgenciado(this);
+        }
+    }
+
+    public void associarContrato(Contrato contrato) {
+        this.contrato = contrato;
+    }
+
+    public boolean isFreeAgent() {
+        return this.timeAtual == null && this.contrato == null;
+    }
+}

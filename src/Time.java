@@ -1,20 +1,21 @@
+package src;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Time {
     private String nomeTime;
     private double saldoCaixa;
     private List<Jogador> jogadores;
 
-
     public Time(String nomeTime, double saldoCaixa, List<Jogador> jogadores) {
+        if (nomeTime == null || nomeTime.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do time não pode ser nulo ou vazio.");
+        }
         this.nomeTime = nomeTime;
         this.saldoCaixa = saldoCaixa;
-        if (jogadores == null) {
-            this.jogadores = new ArrayList<>();
-        } else {
-            this.jogadores = jogadores;
-        }
+        this.jogadores = Objects.requireNonNullElseGet(jogadores, ArrayList::new);
     }
     public String getNomeTime() {
         return nomeTime;
@@ -41,4 +42,22 @@ public class Time {
     }
     public void removerJogadorDoTime(Jogador jogador) {
         jogadores.remove(jogador);
+        if (jogador.getTimeAtual() == this) {
+            jogador.setTimeAtual(null);
+        }
+    }
+    public void adicionarJogador(Jogador jogador) {
+        if (!jogadores.contains(jogador)) {
+            jogadores.add(jogador);
+            jogador.setTimeAtual(this);
+        }
+    }
+
+    public boolean possuiJogador(String nomeJogador) {
+        for (Jogador j : jogadores) {
+            if (j.getNomeJogador().equalsIgnoreCase(nomeJogador)) {
+                return true;
+            }
+        }
+        return false;
     }}
