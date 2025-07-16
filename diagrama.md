@@ -1,5 +1,4 @@
-´´´
-
+```
 classDiagram
 class Jogador {
     - String nomeJogador
@@ -126,5 +125,4 @@ Transferencia "1" --> "0..1" Time : origem/destino
 BID "1" --> "0..*" Transferencia : reporta
 Contrato "1" --> "1" Jogador : envolve
 Contrato "1" --> "1" Time : envolve
-
-´´´
+```
