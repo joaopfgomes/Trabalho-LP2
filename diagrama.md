@@ -1,4 +1,4 @@
-:::
+´´´
 
 classDiagram
 class Jogador {
@@ -127,4 +127,4 @@ BID "1" --> "0..*" Transferencia : reporta
 Contrato "1" --> "1" Jogador : envolve
 Contrato "1" --> "1" Time : envolve
 
-:::
+´´´
