@@ -6,236 +6,93 @@ Este é o trabalho final de LP2, o tema será um sistema gerenciador de elencos 
 
 ## Diagrama de Classes
 
-::: mermaid
-
-    classDiagram
+```mermaid
+classDiagram
     class Jogador {
-        - String nomeJogador
-        - String posicao
-        - double valorMercado
-        - Time timeAtual
-        - Agente agente
-        - Contrato contrato
-        + String getNomeJogador()
-        + void setNomeJogador(String)
-        + String getPosicao()
-        + void setPosicao(String)
-        + double getValorMercado()
-        + void setValorMercado(double)
-        + Time getTimeAtual()
-        + void setTimeAtual(Time)
-        + Agente getAgente()
-        + void setAgente(Agente)
-        + Contrato getContrato()
-        + void setContrato(Contrato)
-        + void removerContrato()
-        + void removerAgente()
-        + void removerTimeAtual()
-        + void associarTime(Time)
-        + void associarAgente(Agente)
-        + void associarContrato(Contrato)
-        + boolean isFreeAgent()
+        -String nomeJogador
+        -String posicao  
+        -double valorMercado
+        +getNomeJogador() String
+        +getPosicao() String
+        +getValorMercado() double
     }
     
     class Time {
-        - String nomeTime
-        - double saldoCaixa
-        - List~Jogador~ jogadores
-        + String getNomeTime()
-        + void setNomeTime(String)
-        + double getSaldoCaixa()
-        + void setSaldoCaixa(double)
-        + List~Jogador~ getJogadores()
-        + void setJogadores(List~Jogador~)
-        + void removerJogadorDoTime(Jogador)
-        + void adicionarJogador(Jogador)
-        + boolean possuiJogador(String)
+        -String nomeTime
+        -double saldoCaixa
+        -List jogadores
+        +getNomeTime() String
+        +getSaldoCaixa() double
+        +adicionarJogador(Jogador)
     }
-
-    class Transferencia {
-        - Jogador jogador
-        - Time timeOrigem
-        - Time timeDestino
-        - double multaRescisoria
-        - double luvas
-        - double valor
-        - LocalDate data
-        - double comissaoAgente
-        + Jogador getJogador()
-        + void setJogador(Jogador)
-        + Time getTimeOrigem()
-        + void setTimeOrigem(Time)
-        + Time getTimeDestino()
-        + void setTimeDestino(Time)
-        + double getMultaRescisoria()
-        + void setMultaRescisoria(double)
-        + double getLuvas()
-        + void setLuvas(double)
-        + double getValor()
-        + void setValor(double)
-        + LocalDate getData()
-        + void setData(LocalDate)
-        + double getComissaoAgente()
-        + void setComissaoAgente(double)
-    }
-
-    class BID {
-        - List~Transferencia~ transferencias
-        + void registrarTransferencia(Transferencia)
-        + void gerarRelatorio()
-        + boolean removerTransferencia(Transferencia)
-        + List~Transferencia~ getTransferencias()
-        + void setTransferencias(List~Transferencia~)
-    }
-
+    
     class Agente {
-        - String nomeAgente
-        - List~Jogador~ jogadoresAgenciados
-        + double calcularComissao(double)
-        + String getNomeAgente()
-        + void setNomeAgente(String)
-        + List~Jogador~ getJogadoresAgenciados()
-        + void setJogadoresAgenciados(List~Jogador~)
-        + void removerJogadorAgenciado(Jogador)
-        + void adicionarJogadorAgenciado(Jogador)
-        + boolean possuiJogador(String)
-        + boolean temJogadores()
+        -String nomeAgente
+        -List jogadoresAgenciados
+        +getNomeAgente() String
+        +adicionarJogador(Jogador)
     }
-
-    class Contrato {
-        - Jogador jogador
-        - Time time
-        - LocalDate inicio
-        - LocalDate fim
-        - double multaRescisoria
-        - String clausulas
-        + Jogador getJogador()
-        + void setJogador(Jogador)
-        + Time getTime()
-        + void setTime(Time)
-        + LocalDate getInicio()
-        + void setInicio(LocalDate)
-        + LocalDate getFim()
-        + void setFim(LocalDate)
-        + double getMultaRescisoria()
-        + void setMultaRescisoria(double)
-        + String getClausulas()
-        + void setClausulas(String)
+    
+    class Transferencia {
+        -Jogador jogador
+        -Time timeOrigem
+        -Time timeDestino
+        -double valor
+        -LocalDate data
     }
-
-    %% RELACIONAMENTOS ENTRE AS CLASSES
-    Jogador "1" --> "0..1" Time : joga_em
-    Jogador "1" --> "0..1" Agente : agenciado_por
-    Jogador "1" --> "0..1" Contrato : assina
-    Time "1" --> "0..*" Jogador : possui
-    Agente "1" --> "0..*" Jogador : agencia
-    Transferencia "1" --> "1" Jogador : envolve
-    Transferencia "1" --> "0..1" Time : origem/destino
-    BID "1" --> "0..*" Transferencia : reporta
-    Contrato "1" --> "1" Jogador : envolve
-    Contrato "1" --> "1" Time : envolve
-:::
+    
+    class Sistema {
+        +cadastrarTime(String, double)
+        +cadastrarAgente(String)
+        +registrarTransferencia()
+    }
+    
+    Jogador --> Time : joga_em
+    Jogador --> Agente : agenciado_por
+    Time --> Jogador : possui
+    Agente --> Jogador : agencia
+    Sistema --> Time : gerencia
+    Sistema --> Agente : gerencia
+    Sistema --> Jogador : gerencia
+```
 
 ## Arquitetura da API REST (Spring Boot)
 
-::: mermaid
-
-    graph TB
-        subgraph "Cliente"
-            C[Frontend/Cliente HTTP]
-        end
-        
-        subgraph "Spring Boot Application"
-            subgraph "Controller Layer"
-                TC[TimeController<br/>@RestController]
-                AC[AgenteController<br/>@RestController]
-                JC[JogadorController<br/>@RestController]
-                TRC[TransferenciaController<br/>@RestController]
-            end
-            
-            subgraph "Service Layer"
-                S[Sistema<br/>@Service]
-            end
-            
-            subgraph "Domain Layer"
-                T[Time]
-                A[Agente]
-                J[Jogador]
-                TR[Transferencia]
-                CO[Contrato]
-                B[BID]
-            end
-        end
-        
-        subgraph "HTTP Endpoints"
-            E1[GET /times<br/>POST /times]
-            E2[GET /agentes<br/>POST /agentes]
-            E3[GET /jogadores]
-            E4[GET /transferencias]
-        end
-        
-        %% Connections
-        C -->|HTTP Requests| E1
-        C -->|HTTP Requests| E2
-        C -->|HTTP Requests| E3
-        C -->|HTTP Requests| E4
-        
-        E1 --> TC
-        E2 --> AC
-        E3 --> JC
-        E4 --> TRC
-        
-        TC -->|@Autowired| S
-        AC -->|@Autowired| S
-        JC -->|@Autowired| S
-        TRC -->|@Autowired| S
-        
-        S --> T
-        S --> A
-        S --> J
-        S --> TR
-        S --> CO
-        S --> B
-        
-        %% Styling
-        classDef controller fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-        classDef service fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-        classDef domain fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-        classDef endpoint fill:#fff3e0,stroke:#e65100,stroke-width:2px
-        
-        class TC,AC,JC,TRC controller
-        class S service
-        class T,A,J,TR,CO,B domain
-        class E1,E2,E3,E4 endpoint
-:::
+```mermaid
+graph TD
+    C[Cliente HTTP] --> TC[TimeController]
+    C --> AC[AgenteController] 
+    C --> JC[JogadorController]
+    C --> TRC[TransferenciaController]
+    
+    TC --> S[Sistema Service]
+    AC --> S
+    JC --> S 
+    TRC --> S
+    
+    S --> T[Time]
+    S --> A[Agente]
+    S --> J[Jogador]
+    S --> TR[Transferencia]
+    S --> B[BID]
+```
 
 ## Fluxo de uma Requisição
 
-::: mermaid
-
-    sequenceDiagram
-        participant Client as Cliente
-        participant Controller as Controller
-        participant Service as Sistema (@Service)
-        participant Domain as Entidades
-        
-        Client->>+Controller: HTTP Request (ex: POST /times)
-        Note over Controller: @RestController<br/>@RequestMapping
-        
-        Controller->>+Service: Method Call (ex: cadastrarTime())
-        Note over Service: @Service<br/>Business Logic
-        
-        Service->>+Domain: Create/Update Entity
-        Note over Domain: Time, Agente, Jogador...
-        
-        Domain-->>-Service: Entity Created
-        Service-->>-Controller: Operation Result
-        
-        Controller->>Controller: JSON Serialization
-        Note over Controller: Jackson (Spring Boot)
-        
-        Controller-->>-Client: HTTP Response (JSON)
-:::
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Controller
+    participant Sistema
+    participant Entidade
+    
+    Client->>Controller: HTTP Request
+    Controller->>Sistema: Method Call
+    Sistema->>Entidade: Create/Update
+    Entidade-->>Sistema: Result
+    Sistema-->>Controller: Response
+    Controller-->>Client: JSON Response
+```
 
 ## Roadmap
 
@@ -262,18 +119,28 @@ Este é o trabalho final de LP2, o tema será um sistema gerenciador de elencos 
 
 ## 📊 Visualização dos Diagramas
 
-### No GitHub/GitLab
-Os diagramas Mermaid são renderizados automaticamente quando você visualiza este README.
+### ⚠️ Problemas de Renderização?
 
-### No VS Code
-1. Instale a extensão "Markdown Preview Mermaid Support"
-2. Abra este arquivo README.md
-3. Use `Ctrl+Shift+V` para abrir o preview
-4. Os diagramas serão renderizados automaticamente
+Se os diagramas não estiverem aparecendo:
 
-### Online
-Para editar ou criar novos diagramas, use o [Mermaid Live Editor](https://mermaid.live/)
+1. **No GitHub**: 
+   - Os diagramas Mermaid devem renderizar automaticamente
+   - Se não aparecerem, veja o arquivo `github-test.md` para testes simples
 
-### Arquivos de Diagramas
-- **DIAGRAMAS.md** - Documentação completa sobre diagramas e ferramentas
-- **README.md** - Contém os diagramas principais do projeto
+2. **No VS Code**:
+   - Instale: "Markdown Preview Mermaid Support" (já instalado)
+   - Use `Ctrl+Shift+V` para preview
+   - Se não funcionar, tente a extensão "Mermaid Preview"
+
+3. **Online - Mermaid Live Editor**:
+   - Acesse: https://mermaid.live/
+   - Cole o código do diagrama para testar
+   - Copie a sintaxe corrigida de volta
+
+### 🔧 Teste de Funcionamento
+- **github-test.md** - Diagramas de teste simples
+- **teste-mermaid.md** - Testes básicos de sintaxe
+
+### 📚 Documentação
+- **DIAGRAMAS.md** - Guia completo de ferramentas e sintaxe
+- **README.md** - Diagramas do projeto (este arquivo)
