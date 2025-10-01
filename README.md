@@ -145,10 +145,10 @@ Este é o trabalho final de LP2, o tema será um sistema gerenciador de elencos 
 - [x] Implementação de interface de usuário (no terminal)
 - [x] Validações e tratamento de erros
 - [x] Testes automatizados
-- [ ] **Fase 1: Backend (API REST com Java)**
-    - [ ] Estruturar projeto com **Spring Boot**
-    - [ ] Migrar lógica de negócio para um `@Service`
-    - [ ] Criar `Controllers` para expor a lógica como API REST
+- [x] **Fase 1: Backend (API REST com Java)**
+    - [x] Estruturar projeto com **Spring Boot**
+    - [x] Migrar lógica de negócio para um `@Service`
+    - [x] Criar `Controllers` para expor a lógica como API REST
 - [ ] **Fase 2: Frontend (Interface Web com Next.js)**
     - [ ] Iniciar projeto com **Next.js**
     - [ ] Gerar telas com **v0.dev**
