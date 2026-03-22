@@ -107,10 +107,10 @@ sequenceDiagram
     - [x] Estruturar projeto com **Spring Boot**
     - [x] Migrar lógica de negócio para um `@Service`
     - [x] Criar `Controllers` para expor a lógica como API REST
-- [ ] **Fase 2: Frontend (Interface Web com Next.js)**
-    - [ ] Iniciar projeto com **Next.js**
-    - [ ] Gerar telas com **v0.dev**
-    - [ ] Conectar frontend com a API usando **Copilot**
+- [x] **Fase 2: Frontend (Interface Web com Next.js)**
+    - [x] Iniciar projeto com **Next.js**
+    - [x] Gerar telas com **v0.dev**
+    - [x] Conectar frontend com a API usando **Copilot**
 - [ ] **Fase 3: Hospedagem e Deploy**
     - [ ] Fazer deploy do Backend Java no **Render**
     - [ ] Fazer deploy do Frontend Next.js na **Vercel**

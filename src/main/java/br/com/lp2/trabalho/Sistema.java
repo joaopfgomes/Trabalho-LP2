@@ -190,4 +190,31 @@ public class Sistema implements Relatorio {
         }
         return validos;
     }
+
+    public Time buscarTime(String nomeTime) {
+        for (Time t : times) {
+            if (t.getNomeTime().equalsIgnoreCase(nomeTime)) {
+                return t;
+            }
+        }
+        return null; // ou lançar exceção
+    }
+
+    public Agente buscarAgente(String nomeAgente) {
+        for (Agente a : agentes) {
+            if (a.getNomeAgente().equalsIgnoreCase(nomeAgente)) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public Jogador buscarJogador(String nomeJogador) {
+        for (Jogador j : jogadores) {
+            if (j.getNomeJogador().equalsIgnoreCase(nomeJogador)) {
+                return j;
+            }
+        }
+        return null;
+    }
 }
