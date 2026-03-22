@@ -1,25 +1,27 @@
 package br.com.lp2.trabalho;
 
-
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import br.com.lp2.trabalho.Sistema;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-
+@SpringBootTest
+@Transactional
 public class SistemaTest {
+
+    @Autowired
+    private Sistema sistema;
+
     @Test
     public void testCadastrarTime() {
-        Sistema sistema = new Sistema();
         sistema.cadastrarTime("Time A", 1000.0);
-        assertEquals(1, sistema.listarTimes().size());
-        assertEquals("Time A", sistema.listarTimes().get(0).getNomeTime());
+        assertTrue(sistema.listarTimes().stream().anyMatch(t -> t.getNomeTime().equals("Time A")));
     }
 
     @Test
     public void testCadastrarAgente() {
-        Sistema sistema = new Sistema();
         sistema.cadastrarAgente("Agente X");
-        assertEquals(1, sistema.listarAgentes().size());
-        assertEquals("Agente X", sistema.listarAgentes().get(0).getNomeAgente());
+        assertTrue(sistema.listarAgentes().stream().anyMatch(a -> a.getNomeAgente().equals("Agente X")));
     }
 }

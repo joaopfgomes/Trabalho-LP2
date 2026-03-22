@@ -1,28 +1,39 @@
 package br.com.lp2.trabalho;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class Sistema implements Relatorio {
-    private final List<Time> times = new ArrayList<>();
-    private final List<Jogador> jogadores = new ArrayList<>();
-    private final List<Agente> agentes = new ArrayList<>();
-    private final BID bid = new BID(new ArrayList<>());
+public class Sistema {
+    
+    @Autowired
+    private TimeRepository timeRepository;
+    @Autowired
+    private JogadorRepository jogadorRepository;
+    @Autowired
+    private AgenteRepository agenteRepository;
+    @Autowired
+    private TransferenciaRepository transferenciaRepository;
+    @Autowired
+    private ContratoRepository contratoRepository;
 
+    @Transactional
     public void cadastrarTime(String nome, double saldoCaixa) {
-        Time time = new Time(nome, saldoCaixa, new ArrayList<>());
-        times.add(time);
+        Time time = new Time(nome, saldoCaixa, null);
+        timeRepository.save(time);
     }
 
+    @Transactional
     public void cadastrarAgente(String nomeAgente) {
-        Agente agente = new Agente(nomeAgente, new ArrayList<>());
-        agentes.add(agente);
+        Agente agente = new Agente(nomeAgente, null);
+        agenteRepository.save(agente);
     }
 
+    @Transactional
     public void cadastrarJogador(String nome, String posicao, double valorMercado, Time timeAtual, Agente agente, Contrato contrato) {
         if (agente == null) throw new IllegalArgumentException("Todo jogador deve ter um agente.");
         Jogador jogador = new Jogador(nome, posicao, valorMercado, null, null, null);
@@ -32,17 +43,17 @@ public class Sistema implements Relatorio {
         }
         if (contrato != null) {
             jogador.associarContrato(contrato);
+            contrato.setJogador(jogador);
         }
-        jogadores.add(jogador);
+        jogadorRepository.save(jogador);
     }
 
-    /**
-     * Cadastro completo de jogador, com validações de negócio centralizadas.
-     */
+    @Transactional
     public void cadastrarJogadorCompleto(String nome, String posicao, double valorMercado, Agente agente, Time time, LocalDate inicioContrato, LocalDate fimContrato, double multaRescisoria, String clausulas) {
         if (agente == null) throw new IllegalArgumentException("Todo jogador deve ter um agente.");
         if (nome == null || nome.trim().isEmpty()) throw new IllegalArgumentException("Nome do jogador não pode ser nulo ou vazio.");
         if (valorMercado < 0) throw new IllegalArgumentException("Valor de mercado não pode ser negativo.");
+        
         Contrato contrato = null;
         if (time != null) {
             if (inicioContrato == null || fimContrato == null) throw new IllegalArgumentException("Contrato exige datas de início e fim.");
@@ -52,169 +63,116 @@ public class Sistema implements Relatorio {
         cadastrarJogador(nome, posicao, valorMercado, time, agente, contrato);
     }
 
+    @Transactional
     public void registrarTransferencia(Jogador jogador, Time timeDestino, double valor, double luvas, double multaRescisoria, double comissaoAgente, Contrato novoContrato) {
         Time timeOrigem = jogador.getTimeAtual();
         if (timeDestino == null) {
             throw new IllegalArgumentException("Time de destino não pode ser nulo.");
         }
-        if (timeOrigem != null && timeOrigem.equals(timeDestino)) {
+        if (timeOrigem != null && timeOrigem.getId() != null && timeOrigem.getId().equals(timeDestino.getId())) {
             throw new IllegalArgumentException("Transferência para o mesmo time não é permitida.");
         }
-        if (timeOrigem == null || jogador.getContrato() == null) {
-            timeDestino.adicionarJogador(jogador);
-            jogador.associarTime(timeDestino);
-            jogador.associarContrato(novoContrato);
+        
+        // Remove contrato antigo se houver
+        Contrato contratoAntigo = jogador.getContrato();
+        if (contratoAntigo != null) {
+            jogador.removerContrato();
+            contratoRepository.delete(contratoAntigo);
+        }
+
+        // Sem time origem
+        if (timeOrigem == null) {
             timeDestino.setSaldoCaixa(timeDestino.getSaldoCaixa() - valor - luvas - comissaoAgente);
-            Transferencia transferencia = new Transferencia(
-                jogador,
-                null,
-                timeDestino,
-                0.0,
-                luvas,
-                valor,
-                LocalDate.now(),
-                comissaoAgente
-            );
-            bid.registrarTransferencia(transferencia);
+            jogador.associarTime(timeDestino);
+            if (novoContrato != null) {
+                novoContrato.setJogador(jogador);
+                jogador.associarContrato(novoContrato);
+            }
+            Transferencia t = new Transferencia(jogador, null, timeDestino, 0.0, luvas, valor, LocalDate.now(), comissaoAgente);
+            
+            timeRepository.save(timeDestino);
+            jogadorRepository.save(jogador);
+            transferenciaRepository.save(t);
             return;
         }
+
+        // Com time origem
         timeOrigem.removerJogadorDoTime(jogador);
         timeOrigem.setSaldoCaixa(timeOrigem.getSaldoCaixa() + valor + multaRescisoria);
-        timeDestino.adicionarJogador(jogador);
+        
         timeDestino.setSaldoCaixa(timeDestino.getSaldoCaixa() - valor - luvas - comissaoAgente - multaRescisoria);
+        
         jogador.associarTime(timeDestino);
-        jogador.associarContrato(novoContrato);
-        Transferencia transferencia = new Transferencia(
-                jogador,
-                timeOrigem,
-                timeDestino,
-                multaRescisoria,
-                luvas,
-                valor,
-                LocalDate.now(),
-                comissaoAgente
-        );
-        bid.registrarTransferencia(transferencia);
+        if (novoContrato != null) {
+            novoContrato.setJogador(jogador);
+            jogador.associarContrato(novoContrato);
+        }
+
+        Transferencia t = new Transferencia(jogador, timeOrigem, timeDestino, multaRescisoria, luvas, valor, LocalDate.now(), comissaoAgente);
+        
+        timeRepository.save(timeOrigem);
+        timeRepository.save(timeDestino);
+        jogadorRepository.save(jogador);
+        transferenciaRepository.save(t);
     }
 
+    @Transactional
     public boolean removerJogador(Jogador jogador) {
-        if (jogadores.remove(jogador)) {
-            if (jogador.getTimeAtual() != null) {
-                jogador.getTimeAtual().removerJogadorDoTime(jogador);
-            }
-            if (jogador.getAgente() != null) {
-                jogador.getAgente().removerJogadorAgenciado(jogador);
-            }
-            return true;
-        }
-        return false;
+        if (jogador == null) return false;
+        jogadorRepository.delete(jogador);
+        return true;
     }
 
+    @Transactional
     public boolean removerTime(Time time) {
-        if (times.remove(time)) {
-            for (Jogador jogador : new ArrayList<>(time.getJogadores())) {
-                removerJogador(jogador);
-            }
-            return true;
-        }
-        return false;
+        if (time == null) return false;
+        timeRepository.delete(time);
+        return true;
     }
 
+    @Transactional
     public boolean removerAgente(Agente agenteParaRemover, Agente novoAgente) {
-        if (agenteParaRemover == null) {
-            return false;
-        }
+        if (agenteParaRemover == null) return false;
 
-        // Se o agente tem jogadores, eles devem ser movidos para um novo agente
         if (agenteParaRemover.temJogadores()) {
-            if (novoAgente == null || novoAgente.equals(agenteParaRemover)) {
-                // Não é possível mover jogadores para o nada ou para o mesmo agente
+            if (novoAgente == null || novoAgente.getId().equals(agenteParaRemover.getId())) {
                 return false;
             }
-            // Move todos os jogadores para o novo agente
-            for (Jogador jogador : new ArrayList<>(agenteParaRemover.getJogadoresAgenciados())) {
+            for (Jogador jogador : agenteRepository.findById(agenteParaRemover.getId()).get().getJogadoresAgenciados()) {
                 jogador.associarAgente(novoAgente);
+                jogadorRepository.save(jogador);
             }
         }
-
-        // Remove o agente da lista do sistema
-        return agentes.remove(agenteParaRemover);
-    }
-
-    public boolean removerAgenteComTransferencia(Agente agenteParaRemover, Agente novoAgente) {
-        if (agenteParaRemover == null) {
-            return false;
-        }
-        if (agenteParaRemover.temJogadores()) {
-            if (novoAgente == null || novoAgente.equals(agenteParaRemover)) {
-                return false;
-            }
-            for (Jogador jogador : new ArrayList<>(agenteParaRemover.getJogadoresAgenciados())) {
-                jogador.associarAgente(novoAgente);
-            }
-        }
-        return agentes.remove(agenteParaRemover);
-    }
-
-    public boolean removerTransferencia(Transferencia transferencia) {
-        return bid.removerTransferencia(transferencia);
-    }
-
-    @Override
-    public void gerarRelatorio() {
-        bid.gerarRelatorio();
+        agenteRepository.delete(agenteParaRemover);
+        return true;
     }
 
     public List<Jogador> listarJogadores() {
-        return new ArrayList<>(jogadores);
+        return jogadorRepository.findAll();
     }
 
     public List<Time> listarTimes() {
-        return new ArrayList<>(times);
+        return timeRepository.findAll();
     }
 
     public List<Transferencia> listarTransferencias() {
-        return bid.getTransferencias();
+        return transferenciaRepository.findAll();
     }
 
     public List<Agente> listarAgentes() {
-        return new ArrayList<>(agentes);
+        return agenteRepository.findAll();
     }
 
-    public List<Agente> listarAgentesValidosParaTransferencia(Agente agenteParaRemover) {
-        List<Agente> validos = new ArrayList<>();
-        for (Agente ag : agentes) {
-            if (!ag.equals(agenteParaRemover)) {
-                validos.add(ag);
-            }
-        }
-        return validos;
-    }
-
+    // Buscas para suporte aos Controllers REST
     public Time buscarTime(String nomeTime) {
-        for (Time t : times) {
-            if (t.getNomeTime().equalsIgnoreCase(nomeTime)) {
-                return t;
-            }
-        }
-        return null; // ou lançar exceção
+        return timeRepository.findByNomeTimeIgnoreCase(nomeTime);
     }
 
     public Agente buscarAgente(String nomeAgente) {
-        for (Agente a : agentes) {
-            if (a.getNomeAgente().equalsIgnoreCase(nomeAgente)) {
-                return a;
-            }
-        }
-        return null;
+        return agenteRepository.findByNomeIgnoreCase(nomeAgente);
     }
 
     public Jogador buscarJogador(String nomeJogador) {
-        for (Jogador j : jogadores) {
-            if (j.getNomeJogador().equalsIgnoreCase(nomeJogador)) {
-                return j;
-            }
-        }
-        return null;
+        return jogadorRepository.findByNomeIgnoreCase(nomeJogador);
     }
 }

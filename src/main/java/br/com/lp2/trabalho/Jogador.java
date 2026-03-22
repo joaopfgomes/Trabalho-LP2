@@ -1,12 +1,25 @@
 package br.com.lp2.trabalho;
 
+import jakarta.persistence.*;
 
+@Entity
 public class Jogador extends Pessoa {
     private String posicao;
     private double valorMercado;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "time_id")
     private Time timeAtual;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "agente_id")
     private Agente agente;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "contrato_id")
     private Contrato contrato;
+
+    public Jogador() {}
 
     public Jogador(String nomeJogador, String posicao, double valorMercado, Time timeAtual, Agente agente, Contrato contrato) {
         super(nomeJogador);
@@ -20,63 +33,23 @@ public class Jogador extends Pessoa {
         this.contrato = contrato;
     }
 
-    public String getNomeJogador() {
-        return getNome();
-    }
+    public String getNomeJogador() { return getNome(); }
+    public void setNomeJogador(String nomeJogador) { setNome(nomeJogador); }
+    public String getPosicao() { return posicao; }
+    public void setPosicao(String posicao) { this.posicao = posicao; }
+    public double getValorMercado() { return valorMercado; }
+    public void setValorMercado(double valorMercado) { this.valorMercado = valorMercado; }
+    public Time getTimeAtual() { return timeAtual; }
+    public void setTimeAtual(Time timeAtual) { this.timeAtual = timeAtual; }
+    public Agente getAgente() { return agente; }
+    public void setAgente(Agente agente) { this.agente = agente; }
+    public Contrato getContrato() { return contrato; }
+    public void setContrato(Contrato contrato) { this.contrato = contrato; }
 
-    public void setNomeJogador(String nomeJogador) {
-        setNome(nomeJogador);
-    }
-
-    public String getPosicao() {
-        return posicao;
-    }
-
-    public void setPosicao(String posicao) {
-        this.posicao = posicao;
-    }
-
-    public double getValorMercado() {
-        return valorMercado;
-    }
-
-    public void setValorMercado(double valorMercado) {
-        this.valorMercado = valorMercado;
-    }
-
-    public Time getTimeAtual() {
-        return timeAtual;
-    }
-
-    public void setTimeAtual(Time timeAtual) {
-        this.timeAtual = timeAtual;
-    }
-
-    public Agente getAgente() {
-        return agente;
-    }
-
-    public void setAgente(Agente agente) {
-        this.agente = agente;
-    }
-
-    public Contrato getContrato() {
-        return contrato;
-    }
-
-    public void setContrato(Contrato contrato) {
-        this.contrato = contrato;
-    }
-
-    public void removerContrato() {
-        this.contrato = null;
-    }
-    public void removerAgente() {
-        this.agente = null;
-    }
-    public void removerTimeAtual() {
-        this.timeAtual = null;
-    }
+    public void removerContrato() { this.contrato = null; }
+    public void removerAgente() { this.agente = null; }
+    public void removerTimeAtual() { this.timeAtual = null; }
+    
     public void associarTime(Time time) {
         this.timeAtual = time;
         if (time != null && !time.getJogadores().contains(this)) {
