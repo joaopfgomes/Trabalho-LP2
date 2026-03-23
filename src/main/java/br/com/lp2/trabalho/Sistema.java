@@ -18,23 +18,28 @@ public class Sistema {
     private AgenteRepository agenteRepository;
     @Autowired
     private TransferenciaRepository transferenciaRepository;
-    @Autowired
-    private ContratoRepository contratoRepository;
+
 
     @Transactional
     public void cadastrarTime(String nome, double saldoCaixa) {
+        if (nome == null || nome.trim().isEmpty()) throw new IllegalArgumentException("Nome do time inválido.");
+        if (buscarTime(nome) != null) throw new IllegalArgumentException("Já existe um time cadastrado com este nome!");
         Time time = new Time(nome, saldoCaixa, null);
         timeRepository.save(time);
     }
 
     @Transactional
     public void cadastrarAgente(String nomeAgente) {
+        if (nomeAgente == null || nomeAgente.trim().isEmpty()) throw new IllegalArgumentException("Nome do agente inválido.");
+        if (buscarAgente(nomeAgente) != null) throw new IllegalArgumentException("Já existe um agente cadastrado com este nome!");
         Agente agente = new Agente(nomeAgente, null);
         agenteRepository.save(agente);
     }
 
     @Transactional
     public void cadastrarJogador(String nome, String posicao, double valorMercado, Time timeAtual, Agente agente, Contrato contrato) {
+        if (nome == null || nome.trim().isEmpty()) throw new IllegalArgumentException("Nome do jogador não pode ser nulo ou vazio.");
+        if (buscarJogador(nome) != null) throw new IllegalArgumentException("Já existe um jogador cadastrado com este nome!");
         if (agente == null) throw new IllegalArgumentException("Todo jogador deve ter um agente.");
         Jogador jogador = new Jogador(nome, posicao, valorMercado, null, null, null);
         jogador.associarAgente(agente);
@@ -77,7 +82,7 @@ public class Sistema {
         Contrato contratoAntigo = jogador.getContrato();
         if (contratoAntigo != null) {
             jogador.removerContrato();
-            contratoRepository.delete(contratoAntigo);
+            // Removido contratoRepository.delete() pois JPA lida com orphanRemoval=true
         }
 
         // Sem time origem

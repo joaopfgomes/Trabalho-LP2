@@ -51,7 +51,8 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
       },
     });
     if (!res.ok) {
-      throw new Error(`Erro na requisição para ${endpoint}: ${res.statusText}`);
+      const errorText = await res.text().catch(() => '');
+      throw new Error(errorText || `Erro na requisição para ${endpoint}: ${res.statusText}`);
     }
     return await res.json();
   } catch (error) {

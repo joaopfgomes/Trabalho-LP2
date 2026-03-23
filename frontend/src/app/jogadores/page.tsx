@@ -96,7 +96,7 @@ export default function JogadoresPage() {
               <label className="block text-slate-400 mb-1">Agente Responsável *</label>
               <select value={nomeAgente} onChange={e => setNomeAgente(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 text-white focus:outline-none focus:border-emerald-500 transition-colors" required>
                 <option value="">Selecione um agente</option>
-                {agentes.map(a => <option key={a.nomeAgente} value={a.nomeAgente}>{a.nomeAgente}</option>)}
+                {agentes.map((a, idx) => <option key={`${a.nomeAgente}-${idx}`} value={a.nomeAgente}>{a.nomeAgente}</option>)}
               </select>
             </div>
 
@@ -104,7 +104,7 @@ export default function JogadoresPage() {
               <label className="block text-slate-400 mb-1">Time Atual (Opcional)</label>
               <select value={nomeTime} onChange={e => setNomeTime(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 text-white focus:outline-none focus:border-emerald-500 transition-colors">
                 <option value="">Sem clube (Agente Livre)</option>
-                {times.map(t => <option key={t.nomeTime} value={t.nomeTime}>{t.nomeTime}</option>)}
+                {times.map((t, idx) => <option key={`${t.nomeTime}-${idx}`} value={t.nomeTime}>{t.nomeTime}</option>)}
               </select>
             </div>
 

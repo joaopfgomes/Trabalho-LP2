@@ -1,0 +1,10 @@
+fix: estabilização de persistência (Fase 2.5) e melhorias de negócio
+
+- Adiciona GlobalExceptionHandler (@ControllerAdvice) para converter exceções de negócio em HTTP 400 estritos.
+- Adiciona WebConfig para destravar requisições de CORS do Next.js (porta 3000).
+- Remove chamadas de exclusão manual no Sistema.java para evitar ObjectDeletedException causado pelo orphanRemoval do Hibernate nas transferências.
+- Inclui checagens de duplicidade (mesmo nome) para Times, Agentes e Jogadores.
+- Ajusta api.ts no frontend para repassar a mensagem de erro do backend diretamente para o usuário na interface visual.
+- Resolve warnings de 'key' (duplicação) map do React no Next.js (pages Transferências e Jogadores).
+- Deleta classes de código morto que se tornaram obsoletas pelo JPA (BID.java, BIDTest.java) e limpa imports órfãos.
+- Introduz script de automação de testes REST (seed.js) contendo clubes e atletas simulados.

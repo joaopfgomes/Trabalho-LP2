@@ -83,14 +83,14 @@ export default function TransferenciasPage() {
               <label className="block text-slate-400 mb-1">Jogador *</label>
               <select value={nomeJogador} onChange={e => setNomeJogador(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 text-white focus:outline-none focus:border-indigo-500 transition-colors" required>
                 <option value="">Selecione o atleta</option>
-                {jogadores.map(j => <option key={j.nomeJogador} value={j.nomeJogador}>{j.nomeJogador} (Atual: {j.timeAtual?.nomeTime || 'Livre'})</option>)}
+                {jogadores.map((j, idx) => <option key={`${j.nomeJogador}-${idx}`} value={j.nomeJogador}>{j.nomeJogador} (Atual: {j.timeAtual?.nomeTime || 'Livre'})</option>)}
               </select>
             </div>
             <div>
               <label className="block text-slate-400 mb-1">Time Destino *</label>
               <select value={nomeTimeDestino} onChange={e => setNomeTimeDestino(e.target.value)} className="w-full bg-slate-800/50 border border-slate-700/50 rounded-lg p-2 text-white focus:outline-none focus:border-indigo-500 transition-colors" required>
                 <option value="">Selecione o clube destino</option>
-                {times.map(t => <option key={t.nomeTime} value={t.nomeTime}>{t.nomeTime} (Caixa: {t.saldoCaixa})</option>)}
+                {times.map((t, idx) => <option key={`${t.nomeTime}-${idx}`} value={t.nomeTime}>{t.nomeTime} (Caixa: {t.saldoCaixa})</option>)}
               </select>
             </div>
 
