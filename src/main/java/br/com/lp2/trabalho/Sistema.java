@@ -138,12 +138,19 @@ public class Sistema {
     @Transactional
     public boolean removerAgente(Agente agenteParaRemover, Agente novoAgente) {
         if (agenteParaRemover == null) return false;
+        
+        Long idAgenteParaRemover = agenteParaRemover.getId();
+        if (idAgenteParaRemover == null) return false;
 
         if (agenteParaRemover.temJogadores()) {
-            if (novoAgente == null || novoAgente.getId().equals(agenteParaRemover.getId())) {
+            if (novoAgente == null) {
                 return false;
             }
-            for (Jogador jogador : agenteRepository.findById(agenteParaRemover.getId()).get().getJogadoresAgenciados()) {
+            Long idNovoAgente = novoAgente.getId();
+            if (idNovoAgente != null && idNovoAgente.equals(idAgenteParaRemover)) {
+                return false;
+            }
+            for (Jogador jogador : agenteRepository.findById(idAgenteParaRemover).get().getJogadoresAgenciados()) {
                 jogador.associarAgente(novoAgente);
                 jogadorRepository.save(jogador);
             }
