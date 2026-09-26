@@ -15,7 +15,7 @@ public class Jogador extends Pessoa {
     @JoinColumn(name = "agente_id")
     private Agente agente;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.PERSIST, orphanRemoval = true)
     @JoinColumn(name = "contrato_id")
     private Contrato contrato;
 

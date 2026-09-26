@@ -70,10 +70,24 @@ public class Sistema {
 
     @Transactional
     public void registrarTransferencia(Jogador jogador, Time timeDestino, double valor, double luvas, double multaRescisoria, double comissaoAgente, Contrato novoContrato) {
+        if (jogador == null || jogador.getId() == null) {
+            throw new IllegalArgumentException("Jogador deve estar cadastrado para uma transferência.");
+        }
         Time timeOrigem = jogador.getTimeAtual();
         if (timeDestino == null) {
             throw new IllegalArgumentException("Time de destino não pode ser nulo.");
         }
+
+        jogador = jogadorRepository.findById(jogador.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Jogador não encontrado."));
+        timeDestino = timeRepository.findById(timeDestino.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Time de destino não encontrado."));
+        timeOrigem = jogador.getTimeAtual();
+        if (novoContrato != null) {
+            novoContrato.setJogador(jogador);
+            novoContrato.setTime(timeDestino);
+        }
+
         if (timeOrigem != null && timeOrigem.getId() != null && timeOrigem.getId().equals(timeDestino.getId())) {
             throw new IllegalArgumentException("Transferência para o mesmo time não é permitida.");
         }
@@ -82,6 +96,7 @@ public class Sistema {
         Contrato contratoAntigo = jogador.getContrato();
         if (contratoAntigo != null) {
             jogador.removerContrato();
+            contratoAntigo.setJogador(null);
             // Removido contratoRepository.delete() pois JPA lida com orphanRemoval=true
         }
 
@@ -96,7 +111,6 @@ public class Sistema {
             Transferencia t = new Transferencia(jogador, null, timeDestino, 0.0, luvas, valor, LocalDate.now(), comissaoAgente);
             
             timeRepository.save(timeDestino);
-            jogadorRepository.save(jogador);
             transferenciaRepository.save(t);
             return;
         }
@@ -117,14 +131,40 @@ public class Sistema {
         
         timeRepository.save(timeOrigem);
         timeRepository.save(timeDestino);
-        jogadorRepository.save(jogador);
         transferenciaRepository.save(t);
     }
 
     @Transactional
     public boolean removerJogador(Jogador jogador) {
         if (jogador == null) return false;
-        jogadorRepository.delete(jogador);
+        
+        Jogador j = jogadorRepository.findById(jogador.getId()).orElse(null);
+        if (j == null) return false;
+
+        // Desvincular do time atual
+        if (j.getTimeAtual() != null) {
+            Time time = j.getTimeAtual();
+            time.getJogadores().remove(j);
+            j.setTimeAtual(null);
+        }
+
+        // Desvincular do agente
+        if (j.getAgente() != null) {
+            Agente ag = j.getAgente();
+            ag.getJogadoresAgenciados().remove(j);
+            j.setAgente(null);
+        }
+
+        // Desvincular de transferências passadas
+        List<Transferencia> transferencias = transferenciaRepository.findAll();
+        for (Transferencia t : transferencias) {
+            if (t.getJogador() != null && t.getJogador().getId().equals(j.getId())) {
+                t.setJogador(null);
+                transferenciaRepository.save(t);
+            }
+        }
+
+        jogadorRepository.delete(j);
         return true;
     }
 

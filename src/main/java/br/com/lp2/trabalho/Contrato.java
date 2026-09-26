@@ -14,7 +14,7 @@ public class Contrato {
     @OneToOne(mappedBy = "contrato")
     private Jogador jogador;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "time_id")
     private Time time;
 
