@@ -15,7 +15,7 @@ export default function TimesPage() {
       const data = await getTimes();
       setTimes(data);
       setError("");
-    } catch (err: any) {
+    } catch {
       setError("Erro ao conectar com a API Backend (Verifique se o Spring Boot está rodando na porta 8080).");
     } finally {
       setLoading(false);
@@ -34,7 +34,7 @@ export default function TimesPage() {
       setNome("");
       setSaldo("");
       loadTimes();
-    } catch (err) {
+    } catch {
       setError("Falha ao criar. Verifique o backend.");
     }
   };

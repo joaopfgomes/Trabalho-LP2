@@ -14,7 +14,7 @@ export default function AgentesPage() {
       const data = await getAgentes();
       setAgentes(data);
       setError("");
-    } catch (err: any) {
+    } catch {
       setError("A API não está respondendo. Verifique se o servidor backend Java foi iniciado.");
     } finally {
       setLoading(false);
@@ -32,7 +32,7 @@ export default function AgentesPage() {
       await createAgente({ nomeAgente: nome });
       setNome("");
       loadAgentes();
-    } catch (err) {
+    } catch {
       setError("Falha ao registrar agente empresarial.");
     }
   };

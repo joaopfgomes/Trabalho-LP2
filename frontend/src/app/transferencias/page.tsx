@@ -29,7 +29,7 @@ export default function TransferenciasPage() {
       setTimes(timesData);
       setJogadores(jogsData);
       setError("");
-    } catch (err: any) {
+    } catch {
       setError("Não foi possível carregar o painel. Conecte o servidor Java em localhost:8080.");
     } finally {
       setLoading(false);
@@ -62,7 +62,7 @@ export default function TransferenciasPage() {
       setNomeJogador(""); setNomeTimeDestino(""); setValor(""); setLuvas(""); setMultaRescisoria("");
       setComissaoAgente(""); setInicioContrato(""); setFimContrato(""); setMultaContrato(""); setClausulasContrato("");
       loadData();
-    } catch (err) {
+    } catch {
       setError("Falha ao registrar a transferência no BID.");
     }
   };

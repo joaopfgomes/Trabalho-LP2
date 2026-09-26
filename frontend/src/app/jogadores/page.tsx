@@ -27,7 +27,7 @@ export default function JogadoresPage() {
       setAgentes(agts);
       setTimes(tms);
       setError("");
-    } catch (err: any) {
+    } catch {
       setError("Backend indisponível no momento. Inicie-o para visualizar os dados.");
     } finally {
       setLoading(false);
@@ -60,7 +60,7 @@ export default function JogadoresPage() {
       setNome(""); setPosicao(""); setValorMercado(""); setNomeAgente(""); setNomeTime("");
       setInicioContrato(""); setFimContrato(""); setMultaRescisoria(""); setClausulas("");
       loadData();
-    } catch (err) {
+    } catch {
       setError("Falha ao registrar jogador.");
     }
   };
